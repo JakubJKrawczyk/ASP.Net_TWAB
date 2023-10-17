@@ -1,11 +1,13 @@
-﻿namespace Infrastructure.Repositories
+﻿using Models.Entities;
+
+namespace Infrastructure.Repositories
 {
     public interface IRepository<T> where T : class
     {
         public Task<IEnumerable<T>> GetAll();
-        public T GetById(int id);
-        public void Add(T entity);
-        public void Update(T entity);
-        public void Delete(T entity);
+        public Task<T> GetById(int id);
+        public Task<T> Add(T entity);
+        public Task<T> Update(T entity);
+        public Task<T> Delete(T entity);
     }
 }

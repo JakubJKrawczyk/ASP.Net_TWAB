@@ -17,32 +17,42 @@ namespace Infrastructure.Repositories
             _context = context;
         }
 
-        public void Add(UserEntity entity)
+        public async Task<UserEntity> Add(UserEntity entity) => await Task.Run(() =>
         {
-            _context.users.Add(entity);
+            _context.Users.Add(entity);
 
             Save();
-        }
-        public void Delete(UserEntity entity)
+            return entity;
+        });
+        public async Task<UserEntity> Delete(UserEntity entity) => await Task.Run(() =>
         {
-            _context.users.Remove(entity);
+            _context.Users.Remove(entity);
             Save();
-        }
+            return entity;
+        });
         public void Dispose()
         {
             GC.SuppressFinalize(this);
         }
 
-        public async Task<IEnumerable<UserEntity>> GetAll() => await Task.Run(() => _context.users.ToList());
+        public async Task<IEnumerable<UserEntity>> GetAll() => await Task.Run(() => _context.Users.ToList());
 
-        public UserEntity GetById(int id) => _context.users.First(x => x.Id == id);
+        public async Task<UserEntity> GetById(int id) => await Task.Run(() => _context.Users.First(x => x.Id == id));
 
-        public void Update(UserEntity entity)
+        public async Task<UserEntity> Update(UserEntity entity) => await Task.Run(async () =>
         {
-            UserEntity toEdit = _context.users.FirstOrDefault(x => x.Id == entity.Id);
-            Delete(toEdit);
-            Add(entity);
-        }
+            UserEntity toEdit = _context.Users.FirstOrDefault(x => x.Id == entity.Id);
+            if (toEdit != null)
+            {
+                await Delete(toEdit);
+                await Add(entity);
+            }
+
+
+            return entity;
+        });
         public void Save() => _context.SaveChanges();
+
+
     }
 }

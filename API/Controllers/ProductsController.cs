@@ -1,4 +1,5 @@
 ﻿using API;
+using API.Commands;
 using API.Queries;
 using Infrastructure.Context;
 using Infrastructure.Repositories;
@@ -14,20 +15,39 @@ namespace API.Controllers
     public class ProductsController : Controller
     {
         private readonly IMediator _mediator;
-        private readonly ProductRepository productRepository;
 
-        public ProductsController()
+        public ProductsController(ShopContext context, IMediator mediator)
         {
-            productRepository = new(new ShopContext());
+            _mediator = mediator;
         }
         [HttpGet(Name = "GetAllProducts")]
         public async Task<IActionResult> GetAll()
         {
-            var products = await _mediator.Send(new GetProductQuery());
+            var products = await _mediator.Send(new GetProductsQuery());
 
             return Ok(products);
         }
+        [HttpPost("AddProduct")]
+        public async Task<IActionResult> AddProduct(string name, double price)
+        {
+            await _mediator.Send(new AddProductCommand(name, price));
+            return Ok(new ProductEntity() { Name = name, Price = price });
+        }
+        [HttpPut("UpdateProduct")]
+        public async Task<IActionResult> UpdateProduct(int id, string newName, double newPrice)
+        {
 
+            await _mediator.Send(new UpdateProductCommand(id, newName, newPrice));
+            return Ok(new ProductEntity() { PId = id, Price = newPrice, Name = newName });
+
+        }
+        [HttpDelete("DeleteProduct")]
+        public async Task<IActionResult> DeleteProduct(int id)
+        {
+            await _mediator.Send(new DeleteProductCommand(id));
+            return Ok(new ProductEntity() { Name = "Done", Price = 0, PId = id });
+        }
 
     }
+
 }

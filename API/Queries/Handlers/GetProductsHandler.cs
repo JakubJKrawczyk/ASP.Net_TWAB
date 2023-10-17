@@ -5,13 +5,13 @@ using Models.Entities;
 
 namespace API.Queries.Handlers
 {
-    public class GetProductsHandler : IRequestHandler<GetProductQuery, IEnumerable<ProductEntity>>
+    public class GetProductsHandler : IRequestHandler<GetProductsQuery, IEnumerable<ProductEntity>>
     {
         private readonly ProductRepository _repository;
         public GetProductsHandler(ProductRepository repo)
         {
             _repository = repo;
         }
-        public Task<IEnumerable<ProductEntity>> Handle(GetProductQuery request, CancellationToken cancellationToken) => _repository.GetAll();
+        public Task<IEnumerable<ProductEntity>> Handle(GetProductsQuery request, CancellationToken cancellationToken) => _repository.GetAll();
     }
 }
